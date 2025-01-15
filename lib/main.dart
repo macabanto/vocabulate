@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,27 +8,12 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+  // This widget is the root of the application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
@@ -56,15 +42,24 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  String? _target_word; //initial load -> pull random word from database
+  String? _synonym_1; //  target word strongest correlation synonym
+  String? _synonym_2; //  target word second strongest correlation synonym
+  String? _synonym_3; //  etc.
+  String? _synonym_4; //  etc.
+  String? _synonym_5; //  etc.
+  String? _synonym_6;
+  String? _synonym_7;
 
   void _incrementCounter() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
       _counter++;
+    });
+  }
+
+  void _target_changed(String new_target) {
+    setState(() {
+      _target_word = new_target;
     });
   }
 
@@ -77,40 +72,66 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      //as per Lindsay's rec, use the Stack() Widget..
+      //..with positioned child widgets
+      body: Stack(children: <Widget>[
+        Positioned.fill(
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(
+              '$_target_word',
+              style: GoogleFonts.didactGothic(
+                fontSize: 39,
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+          ),
         ),
-      ),
+        buildSynonym('$_synonym_1')
+      ]),
+      /*
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(12.0), // Padding inside the border
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black,
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(35),
+          ),
+          child: Text(
+            'vocabulary',
+            style: GoogleFonts.didactGothic(
+              fontSize: 42,
+            ),
+          ),
+        ),
+      ),*/
+
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Positioned buildSynonym(String synonym) {
+    return Positioned(
+      top: 100,
+      left: 100,
+      child: GestureDetector(
+        onTap: () {
+          _target_changed(synonym);
+        },
+        child: Text(
+          synonym,
+          style: GoogleFonts.didactGothic(
+            fontSize:
+                33, //font size can varry based on correlation level between target word and synonym
+          ),
+        ),
+      ),
     );
   }
 }
