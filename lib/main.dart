@@ -1,124 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of the application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Vocabulate',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String _target_word =
-      'target-word'; //initial load -> pull random word from database
-  String? _synonym_1 =
-      "synonym 1"; //  target word strongest correlation synonym
-  String? _synonym_2 =
-      "synonym 2"; //  target word second strongest correlation synonym
-  String? _synonym_3 = "synonym 3"; //  etc.
-  String? _synonym_4 = "synonym 4"; //  etc.
-  String? _synonym_5 = "synonym 5"; //  etc.
-  String? _synonym_6 = "synonym 6";
-  String? _synonym_7 = "synonym 7";
+  @override
+  String _target_word = 'target word';
+  String _synonym_1 = 'synonym 1';
+  String _synonym_2 = 'synonym 2';
+  String _synonym_3 = 'synonym 3';
+  String _synonym_4 = 'synonym 4';
+  String _synonym_5 = 'synonym 5';
+  String _synonym_6 = 'synonym 6';
+  String _synonym_7 = 'synonym 7';
 
-  void _target_changed(String new_target) {
-    setState(() {
-      _target_word = new_target;
-    });
+  Widget build(BuildContext context) {
+    // Retrieve the size of the screen
+    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = screenSize.width;
+    final screenHeight = screenSize.height;
+//TODO : find a way to turn correlation between two synonyms into a 2Dimensional scale ( show correlation by spacing between words! )
+//impossible to do on 2D between ALL words, however can be computed when simply iterating thru list of synonomyms compared to target word!
+//we want to make the positioning to take up the whole screen, and be unique
+    return Scaffold(
+        body: Stack(
+      children: <Widget>[
+        StackChildAligned(
+            word: '$_target_word', top: 0.5, left: 0.5), //target word centered
+        StackChildAligned(
+          word: '$_synonym_1',
+          top: 0.7,
+          left: 0.7,
+        ), //
+        StackChildAligned(
+          word: '$_synonym_2',
+          top: 0.3,
+          left: 0.3,
+        ),
+        StackChildAligned(
+          word: '$_synonym_3',
+          top: 0.8,
+          left: 0.2,
+        ), //
+        StackChildAligned(
+          word: '$_synonym_4',
+          top: 0.2,
+          left: 0.8,
+        ), //
+        StackChildAligned(
+          word: '$_synonym_5',
+          top: 0.9,
+          left: 0.4,
+        ),
+        StackChildAligned(
+          word: '$_synonym_6',
+          top: 0.1,
+          left: 0.6,
+        ), //
+        StackChildAligned(
+          word: '$_synonym_7',
+          top: 0.9,
+          left: 0.9,
+        ),
+      ],
+    ));
   }
+}
 
+//TODO: convert Align widget to AnimatedAlign as will be needed when user selects synonym
+class StackChildAligned extends StatelessWidget {
+  const StackChildAligned({
+    super.key,
+    required this.word,
+    required this.top,
+    required this.left,
+  });
+
+  final String word;
+  final double top;
+  final double left;
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      //as per Lindsay's rec, use the Stack() Widget..
-      //..with positioned child widgets
-      body: Stack(children: <Widget>[
-        Positioned.fill(
-          child: Align(
-            alignment: Alignment.center,
-            child: Text(
-              '$_target_word',
-              style: GoogleFonts.didactGothic(
-                fontSize: 39,
-              ),
-            ),
-          ),
-        ),
-        buildSynonym('$_synonym_1', 100, 10),
-        buildSynonym('$_synonym_2', 100, 30),
-        buildSynonym('$_synonym_3', 200, 350),
-        buildSynonym('$_synonym_4', 350, 350),
-        buildSynonym('$_synonym_5', 550, 250),
-        buildSynonym('$_synonym_6', 400, 100),
-        buildSynonym('$_synonym_7', 600, 100),
-      ]),
-    );
-  }
-
-  Positioned buildSynonym(String synonym, double top, double left) {
-    return Positioned(
-      top: top,
-      left: left,
-      child: GestureDetector(
-        onTap: () {
-          _target_changed(synonym);
-        },
+    return Align(
+        alignment: FractionalOffset(top, left),
         child: Container(
-          padding: EdgeInsets.all(12.0), // Padding inside the border
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.black,
-              width: 3,
+            padding: EdgeInsets.all(12.0), // Padding inside the border
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.black,
+                width: 3,
+              ),
+              borderRadius: BorderRadius.circular(22),
             ),
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Text(
-            synonym,
-            style: GoogleFonts.didactGothic(
-              fontSize:
-                  33, //font size can varry based on correlation level between target word and synonym
-            ),
-          ),
-        ),
-      ),
-    );
+            child: Text(word,
+                style: GoogleFonts.didactGothic(
+                  fontSize: 24,
+                ))));
   }
 }
