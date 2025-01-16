@@ -41,21 +41,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  String? _target_word; //initial load -> pull random word from database
-  String? _synonym_1; //  target word strongest correlation synonym
-  String? _synonym_2; //  target word second strongest correlation synonym
-  String? _synonym_3; //  etc.
-  String? _synonym_4; //  etc.
-  String? _synonym_5; //  etc.
-  String? _synonym_6;
-  String? _synonym_7;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  String _target_word =
+      'target-word'; //initial load -> pull random word from database
+  String? _synonym_1 =
+      "synonym 1"; //  target word strongest correlation synonym
+  String? _synonym_2 =
+      "synonym 2"; //  target word second strongest correlation synonym
+  String? _synonym_3 = "synonym 3"; //  etc.
+  String? _synonym_4 = "synonym 4"; //  etc.
+  String? _synonym_5 = "synonym 5"; //  etc.
+  String? _synonym_6 = "synonym 6";
+  String? _synonym_7 = "synonym 7";
 
   void _target_changed(String new_target) {
     setState(() {
@@ -86,10 +82,25 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        buildSynonym('$_synonym_1')
+        buildSynonym('$_synonym_1', 100, 10),
+        buildSynonym('$_synonym_2', 100, 30),
+        buildSynonym('$_synonym_3', 200, 350),
+        buildSynonym('$_synonym_4', 350, 350),
+        buildSynonym('$_synonym_5', 550, 250),
+        buildSynonym('$_synonym_6', 400, 100),
+        buildSynonym('$_synonym_7', 600, 100),
       ]),
-      /*
-      body: Center(
+    );
+  }
+
+  Positioned buildSynonym(String synonym, double top, double left) {
+    return Positioned(
+      top: top,
+      left: left,
+      child: GestureDetector(
+        onTap: () {
+          _target_changed(synonym);
+        },
         child: Container(
           padding: EdgeInsets.all(12.0), // Padding inside the border
           decoration: BoxDecoration(
@@ -97,38 +108,14 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.black,
               width: 3,
             ),
-            borderRadius: BorderRadius.circular(35),
+            borderRadius: BorderRadius.circular(22),
           ),
           child: Text(
-            'vocabulary',
+            synonym,
             style: GoogleFonts.didactGothic(
-              fontSize: 42,
+              fontSize:
+                  33, //font size can varry based on correlation level between target word and synonym
             ),
-          ),
-        ),
-      ),*/
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-
-  Positioned buildSynonym(String synonym) {
-    return Positioned(
-      top: 100,
-      left: 100,
-      child: GestureDetector(
-        onTap: () {
-          _target_changed(synonym);
-        },
-        child: Text(
-          synonym,
-          style: GoogleFonts.didactGothic(
-            fontSize:
-                33, //font size can varry based on correlation level between target word and synonym
           ),
         ),
       ),
