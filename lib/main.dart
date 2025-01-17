@@ -40,13 +40,10 @@ class _MyHomePageState extends State<MyHomePage> {
   String _synonym_7 = 'synonym 7';
 
   Widget build(BuildContext context) {
-    // Retrieve the size of the screen
-    final screenSize = MediaQuery.of(context).size;
-    final screenWidth = screenSize.width;
-    final screenHeight = screenSize.height;
 //TODO : find a way to turn correlation between two synonyms into a 2Dimensional scale ( show correlation by spacing between words! )
 //impossible to do on 2D between ALL words, however can be computed when simply iterating thru list of synonomyms compared to target word!
 //we want to make the positioning to take up the whole screen, and be unique
+//we also to include lines that "tether" the synonym to the target word
     return Scaffold(
         body: Stack(
       children: <Widget>[
@@ -84,8 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ), //
         StackChildAligned(
           word: '$_synonym_7',
-          top: 0.9,
-          left: 0.9,
+          top: 1,
+          left: 1,
         ),
       ],
     ));
