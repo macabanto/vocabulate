@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1019806888866",
+    "project_id": "wordnet-d2044",
+    "storage_bucket": "wordnet-d2044.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1019806888866:android:5492baee46444071ad78fb",
+        "android_client_info": {
+          "package_name": "com.example.vocabulate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGMC85n3qEpFzEKqkjb53dUOHi-E144hk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

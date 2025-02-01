@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
+import 'word.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'dart:math';
 
-void main() {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  var app = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  print("\n\nConnected to Firebase App ${app.options.projectId}\n\n");
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,90 +20,62 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Vocabulate',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+    return ChangeNotifierProvider(
+      create: (context) => WordModel(),
+      child: MaterialApp(
+        title: 'Vocabulate',
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        ),
+        home: MyHomePage(),
       ),
-      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   @override
-  String _target_word = 'target word';
-  String _synonym_1 = 'synonym 1';
-  String _synonym_2 = 'synonym 2';
-  String _synonym_3 = 'synonym 3';
-  String _synonym_4 = 'synonym 4';
-  String _synonym_5 = 'synonym 5';
-  String _synonym_6 = 'synonym 6';
-  String _synonym_7 = 'synonym 7';
-
   Widget build(BuildContext context) {
-//TODO : find a way to turn correlation between two synonyms into a 2Dimensional scale ( show correlation by spacing between words! )
-//impossible to do on 2D between ALL words, however can be computed when simply iterating thru list of synonomyms compared to target word!
-//we want to make the positioning to take up the whole screen, and be unique
-//we also to include lines that "tether" the synonym to the target word
+    return Consumer<WordModel>(builder: buildScaffold);
+  }
+
+  Scaffold buildScaffold(BuildContext context, WordModel wordModel, _) {
+    //TODO: add AlignedNodes to the Stack widget dynamically using a 4-loop
+    // -> take the target word
+    // -> take the 7 highest ranked ( in terms of frequency ) words
+    // -> for each word, determine the correlation-to-target-word value
+    // -> position word accordingly
+
+    Random random = new Random();
+    int randomNumber = random.nextInt(100); // from 0 upto 99 included
+    var _target_word = wordModel.items[randomNumber];
     return Scaffold(
         body: Stack(
       children: <Widget>[
-        StackChildAligned(
-            word: '$_target_word', top: 0.5, left: 0.5), //target word centered
-        StackChildAligned(
-          word: '$_synonym_1',
-          top: 0.7,
-          left: 0.7,
-        ), //
-        StackChildAligned(
-          word: '$_synonym_2',
-          top: 0.3,
-          left: 0.3,
-        ),
-        StackChildAligned(
-          word: '$_synonym_3',
-          top: 0.8,
-          left: 0.2,
-        ), //
-        StackChildAligned(
-          word: '$_synonym_4',
-          top: 0.2,
-          left: 0.8,
-        ), //
-        StackChildAligned(
-          word: '$_synonym_5',
-          top: 0.9,
-          left: 0.4,
-        ),
-        StackChildAligned(
-          word: '$_synonym_6',
-          top: 0.1,
-          left: 0.6,
-        ), //
-        StackChildAligned(
-          word: '$_synonym_7',
-          top: 1,
-          left: 1,
-        ),
+        AlignedNode(
+            word: _target_word.word,
+            top: 0.5,
+            left: 0.5), //target word centered
       ],
     ));
   }
 }
 
 //TODO: convert Align widget to AnimatedAlign as will be needed when user selects synonym
-class StackChildAligned extends StatelessWidget {
-  const StackChildAligned({
+class AlignedNode extends StatelessWidget {
+  const AlignedNode({
     super.key,
-    required this.word,
-    required this.top,
-    required this.left,
+    required this.word, //string word value
+    required this.top, // double value[ 0 : 1 ], determines Y position
+    required this.left, // double value[ 0 : 1 ], determines X position
   });
 
   final String word;
